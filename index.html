@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détection du cancer du sein</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: white;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #8f1e1e;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        input[type="file"], input[type="radio"] {
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: #007BFF;
+            border: none;
+            padding: 10px 25px;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            color: green;
+            font-size: 20px;
+        }
+        .image-preview {
+            margin-top: 20px;
+        }
+        .image-preview img {
+            max-width: 300px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Détection du cancer du sein</h1>
+
+    <div class="container">
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <p>Choisissez un modèle :</p>
+            <label>
+                <input type="radio" name="model" value="vgg16"
+                {% if request.form.get('model') == 'vgg16' or not request.form.get('model') %}checked{% endif %}>
+                VGG16
+            </label>
+            <label>
+                <input type="radio" name="model" value="vgg19"
+                {% if request.form.get('model') == 'vgg19' %}checked{% endif %}>
+                VGG19
+            </label>
+            <br><br>
+
+            <input type="file" name="image" accept="image/*" required><br><br>
+            <button type="submit">Analyser</button>
+        </form>
+
+        {% if prediction %}
+           <div class="result">
+              Résultat : <strong>{{ prediction }}</strong><br>
+              Confiance : <strong>{{ '%.2f' % confidence }}%</strong>
+           </div>
+        
+        {% endif %}
+
+        {% if image_path %}
+            <div class="image-preview">
+                <img src="{{ image_path }}" alt="Image analysée">
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
+
+
+
